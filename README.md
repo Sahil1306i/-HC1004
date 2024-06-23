@@ -15,6 +15,15 @@ This project integrates Generative AI into an accounting platform to enable prom
 2. **Authentication Service**
    - CRYPTOGRAPHY- We are using the crypotgraphy to authnticate and encrypt the user crendentials 
    - **Description:** Ensures secure authentication and authorization of users. Manages user sessions and tokens.
+>>>INTEGRATION OF GPT- ENGINEER
+   - Using the pre build github repo of the gpt engineer to give it the custom command to train on the fake datasets for training and testing
+   - link of the repo https://github.com/gpt-engineer-org/gpt-engineer.git
+ >> PROMPTS FOR THE GPT ENGINEER
+   -Use a fake data set to train and test chatbot that can analyse different parameters in a accounting platform
+   -export openai API key
+   -run the python.main.py in the terminal after giving it the API keys
+   - It will open a summrize and clarification promt and we will have to choose the desired prompt to train and test it
+   -Or if we want to train on the real data set than we have to use the microsoft azure
 
 3. **API Gateway**
    - **Framework:** Flask
