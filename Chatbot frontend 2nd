@@ -1,0 +1,180 @@
+FRONTEND
+#chat.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Chatbot</title>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <p class="bot-message">Hello {{ name }}! How can I assist you today?</p>
+        </div>
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message here..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                const chatBox = document.getElementById('chat-box');
+                const userMessage = document.createElement('p');
+                userMessage.className = 'user-message';
+                userMessage.textContent = "You: " + userInput;
+                chatBox.appendChild(userMessage);
+
+                const botMessage = document.createElement('p');
+                botMessage.className = 'bot-message';
+                botMessage.textContent = "Bot: I'm here to help with your queries!";
+                chatBox.appendChild(botMessage);
+
+                document.getElementById('user-input').value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
+
+#index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>User Identification</title>
+</head>
+<body>
+    <div class="container">
+        <h1>User Identification</h1>
+        <form method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Submit</button>
+        </form>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+#styles.css
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container, .chat-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+input[type="text"], input[type="email"], input[type="password"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background: #007BFF;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
+.chat-box {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.user-message {
+    background: #007BFF;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.bot-message {
+    background: #e9e9e9;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+
+BACKEND
+# app.py
+
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(_name_)
+
+api_key =" YOUR_API_KEY"
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        password = request.form['password']
+        if not name or not email or not phone or not password:
+            return render_template('index.html', error="All fields are required.")
+        return redirect(url_for('chat', name=name))
+    return render_template('index.html')
+
+@app.route('/chat')
+def chat():
+    name = request.args.get('name')
+    return render_template('chat.html', name=name)
+
+if _name_ == '_main_':
+    app.run(debug=True)
