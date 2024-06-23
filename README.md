@@ -9,11 +9,11 @@ This project integrates Generative AI into an accounting platform to enable prom
 ### Components and Technologies
 
 1. **User Interface (UI)**
-   - **Frontend Framework:** React.js or Angular.js
+   - **Frontend Framework:** Flask or React
    - **Description:** A web-based interface where users input their natural language queries and receive reports.
 
 2. **Authentication Service**
-   - **Framework:** Flask-JWT-Extended for JWT-based authentication
+   - CRYPTOGRAPHY- We are using the crypotgraphy to authnticate and encrypt the user crendentials 
    - **Description:** Ensures secure authentication and authorization of users. Manages user sessions and tokens.
 
 3. **API Gateway**
