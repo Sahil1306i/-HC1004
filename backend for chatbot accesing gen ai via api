@@ -1,0 +1,95 @@
+#Install Python: Ensure you have Python installed on your system.
+Install Flask: Install Flask using pip.
+pip install Flask
+Install Requests: Install the requests library to make HTTP requests.
+pip install requests
+Directory Structure
+chatbot/
+│
+├── app.py
+├── config.py
+├── requirements.txt
+└── templates/
+    └── index.html
+
+# app.py file for the backend that access the gen ai thru api
+from flask import Flask, request, jsonify, render_template
+import requests
+from config import Config
+
+app = Flask(__name__)
+app.config.from_object(Config)
+
+def get_openai_response(prompt):
+    headers = {
+        'Authorization': f'Bearer {app.config["OPENAI_API_KEY"]}',
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'model': 'text-davinci-003',
+        'prompt': prompt,
+        'max_tokens': 150
+    }
+    response = requests.post('https://api.openai.com/v1/completions', headers=headers, json=data)
+    return response.json()
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.json.get('message')
+    if not user_message:
+        return jsonify({'error': 'No message provided'}), 400
+
+    openai_response = get_openai_response(user_message)
+    if 'choices' in openai_response and len(openai_response['choices']) > 0:
+        chatbot_reply = openai_response['choices'][0]['text'].strip()
+        return jsonify({'reply': chatbot_reply})
+    else:
+        return jsonify({'error': 'No response from OpenAI'}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+A simple frontend to interact with the chatbot.
+
+# html code to intract with this backend 
+Copy code
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <script>
+        async function sendMessage() {
+            const userMessage = document.getElementById('message').value;
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userMessage })
+            });
+            const data = await response.json();
+            if (data.reply) {
+                document.getElementById('chatbox').innerHTML += `<p><b>You:</b> ${userMessage}</p><p><b>Bot:</b> ${data.reply}</p>`;
+            } else {
+                document.getElementById('chatbox').innerHTML += `<p><b>Error:</b> ${data.error}</p>`;
+            }
+            document.getElementById('message').value = '';
+        }
+    </script>
+</head>
+<body>
+    <h1>Chatbot</h1>
+    <div id="chatbox" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll;"></div>
+    <input type="text" id="message" placeholder="Type your message here...">
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
