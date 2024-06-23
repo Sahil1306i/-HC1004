@@ -4,3 +4,10 @@ Flask-SQLAlchemy
 openai
 python-dotenv
 pytest
+export OPENAI_API_KEY='your-openai-api-key-here'
+pip install -r requirements.txt
+Flask==2.0.2
+requests==2.26.0
+Run the Flask Application:
+
+python app.py
