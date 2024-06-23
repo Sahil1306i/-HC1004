@@ -23,6 +23,8 @@ This project integrates Generative AI into an accounting platform to enable prom
    -export openai API key
    -run the python.main.py in the terminal after giving it the API keys
    - It will open a summrize and clarification promt and we will have to choose the desired prompt to train and test it
+   - It automates and directly provides us the code in the workspace
+   - We can load custom data frame and then train it
    -Or if we want to train on the real data set than we have to use the microsoft azure
 
 3. **API Gateway**
