@@ -1,0 +1,101 @@
+ #Create a directory for your project.  
+mkdir secure_credentials
+cd secure_credentials
+
+
+
+# Create and activate a virtual environment to manage your project's dependencies
+python -m venv venv
+.\venv\Scripts\activate
+
+#Install the cryptography library:
+pip install cryptography
+
+
+
+# encrypt_credentials.py
+
+from cryptography.fernet import Fernet
+import os
+
+# Generate a key for encryption
+key = Fernet.generate_key()
+cipher_suite = Fernet(key)
+
+# Save the key to a file (for demonstration purposes, in a real application, handle the key securely)
+with open('secret.key', 'wb') as key_file:
+    key_file.write(key)
+
+# Function to encrypt and save credentials
+def save_credentials(username, password, file_path):
+    # Encrypt the username and password
+    encrypted_username = cipher_suite.encrypt(username.encode())
+    encrypted_password = cipher_suite.encrypt(password.encode())
+
+    # Create a dictionary to store encrypted data
+    credentials = {
+        'username': encrypted_username.decode(),
+        'password': encrypted_password.decode()
+    }
+
+    # Save the encrypted data to a file
+    with open(file_path, 'w') as file:
+        file.write(str(credentials))
+
+# Example usage
+username = input("Enter your username: ")
+password = input("Enter your password: ")
+file_path = os.path.expanduser('~/.user_credentials')
+
+save_credentials(username, password, file_path)
+
+# Set file permissions to be private (Unix-based systems)
+os.chmod(file_path, 0o600)
+
+
+
+# Run the script in your terminal
+
+python encrypt_credentials.py
+
+
+
+# Create a file named decrypt_credentials.py in your project directory and add the following code:
+
+from cryptography.fernet import Fernet
+import ast
+import os
+
+# Load the encryption key
+with open('secret.key', 'rb') as key_file:
+    key = key_file.read()
+
+cipher_suite = Fernet(key)
+
+# Function to read and decrypt credentials
+def load_credentials(file_path):
+    # Read the encrypted data from the file
+    with open(file_path, 'r') as file:
+        encrypted_data = ast.literal_eval(file.read())
+
+    # Decrypt the username and password
+    encrypted_username = encrypted_data['username'].encode()
+    encrypted_password = encrypted_data['password'].encode()
+    
+    username = cipher_suite.decrypt(encrypted_username).decode()
+    password = cipher_suite.decrypt(encrypted_password).decode()
+
+    return username, password
+
+# Example usage
+file_path = os.path.expanduser('~/.user_credentials')
+username, password = load_credentials(file_path)
+
+print(f"Username: {username}")
+print(f"Password: {password}")
+
+
+
+
+# Run the script in your terminal:
+python decrypt_credentials.py
